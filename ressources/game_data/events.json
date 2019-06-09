@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "text": "Hello my lord !",
+        "author": 1,
+        "priority": true,
+        "is_done": false,
+        "conditions": {},
+        "choices": [
+            {
+                "id": 1,
+                "text": "Hello.",
+                "results": {
+                    "1": {
+                        "reputation": 1
+                    },
+                    "2": {
+                        "1": {
+                            "level_relation": 100
+                        }
+                    }
+                },
+                "conditions": {}
+            },
+            {
+                "id": 2,
+                "text": "Holà.",
+                "results": {
+                    "1": {
+                        "reputation": 2
+                    }
+                },
+                "conditions": {}
+            }
+        ]
+    }
+]

@@ -1,0 +1,28 @@
+{
+    "1": {
+        "name": "",
+        "house": "",
+        "status": 0,
+        "reputation": 0,
+        "honnor": 0,
+        "fear": 0,
+        "money": 100,
+        "military_force": 0.1
+    },
+    "2": [
+        {
+            "id": 1,
+            "name": "John",
+            "level_relation": 50
+        }
+    ],
+    "3": [
+        {
+            "id": 1,
+            "name": "The cavern",
+            "status": 1,
+            "defense": 0,
+            "profit": {}
+        }
+    ]
+}

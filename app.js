@@ -11,6 +11,8 @@ const routerApi = require(rootPath + 'server/api/routes/router');
 const file = "views/game.html";
 
 app.use(express.static(rootPath));
+app.use(express.json());
+
 // apply router to the express app
 app.use('/api/v1', routerApi);
 

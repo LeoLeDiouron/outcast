@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-router.get("/event", (req, res) => {
-    res.status(200).json({
-        msg: "Everything is ok"
-    });
-});
+const gameManager = require('../controllers/game-manager');
 
-router.get('*', (req, res) => {
-    res.status(400).json({
-        msg: "Not found"
-    });
-})
+router.use(express.json());
+
+router.get("/start_game", gameManager.startGame)
+
+router.get("/events", gameManager.getEvent);
+router.post("/events", gameManager.postChoice);
+
+router.get("/context", gameManager.getContext)
+
+router.get('*', gameManager.notFound)
 
 module.exports = router;
