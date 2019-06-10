@@ -1,1 +1,70 @@
-Hello
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>OUTCAST</title>
+    <script src="./phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    let game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, 'outcast', { preload: preload, create: create, update: update });
+
+    // text
+    let textTitle = null;
+    let event = null;
+    let choices = [];
+
+    // size text
+    const sizeTitle = 50;
+
+    // game manager
+    let token = null;
+    let waitEvent = true;
+
+    // PHASERJS function - to preload assets
+    function preload() {
+        // load font
+        game.load.bitmapFont('gem', 'ressources/assets/fonts/gem.png', 'ressources/assets/fonts/gem.xml');
+    }
+
+    // PHASERJS function - to start the gui
+    function create() {
+        textTitle = game.add.bitmapText(0, 0, 'gem', 'OUTCAST', sizeTitle);
+        textTitle.centerX = window.innerWidth / 2;
+        textTitle.centerY =  window.innerHeight / 2 - textTitle.height * 3;
+        // get the token (=start a game server-side)
+        let request = sendHttpRequest("http://localhost:3000/api/v1/start_game", "GET", null);
+        token = JSON.parse(request.response).token;
+    }
+
+    // PHASERJS function - update the gui
+    function update() {
+        if (waitEvent == true) {
+            // need to start game before
+            let request = sendHttpRequest("http://localhost:3000/api/v1/events", "GET", null);
+            console.log(request.response);
+            waitEvent = false;
+        }
+    }
+
+    // send an http request
+    function sendHttpRequest(url, method, body) {
+        const req = new XMLHttpRequest();
+        req.open(method, url, false);
+        if (token != null)
+            req.setRequestHeader('Authorization', token);
+        req.send(body);
+        return req;
+    }
+
+</script>
+
+</body>
+</html>
