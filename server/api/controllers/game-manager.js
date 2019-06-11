@@ -20,6 +20,7 @@ function getEvent(req, res) {
 function postChoice(req, res) {
     console.log("____________POST EVENT____________")
     const token = req.headers.authorization;
+    console.log(JSON.stringify(req.body))
     const idEvent = req.body.id_event;
     const idChoice = req.body.id_choice;
     games[token] = eventsManager.modifyContext(games[token], idEvent, idChoice);

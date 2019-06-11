@@ -14,43 +14,141 @@
 
 <script type="text/javascript">
 
-    let game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, 'outcast', { preload: preload, create: create, update: update });
+    // display
+    let windowHeight = window.innerHeight;
+    let windowWidth = window.innerWidth;
+
+    // game
+    let game = new Phaser.Game(windowWidth, windowHeight, Phaser.AUTO, 'outcast', { preload: preload, create: create, update: update });
 
     // text
     let textTitle = null;
-    let event = null;
-    let choices = [];
+    let textEvent = null;
+    let textChoices = [];
+
+    // buttons
+    let buttonValidate = null;
+    let buttonChoices = [];
 
     // size text
     const sizeTitle = 50;
+    const sizeEvent = 30;
 
     // game manager
     let token = null;
     let waitEvent = true;
+    let idEvent = null;
+    let selectedChoice = null;
+
+    // url api
+    const baseUrlLocalhost = "http://localhost:3000";
+    const baseUrl = "http://192.168.0.11:3000";
+    const api = "/api/v1";
+    const endpointStart = baseUrlLocalhost + api + "/start_game";
+    const endpointEvent = baseUrlLocalhost + api + "/events";
 
     // PHASERJS function - to preload assets
     function preload() {
         // load font
         game.load.bitmapFont('gem', 'ressources/assets/fonts/gem.png', 'ressources/assets/fonts/gem.xml');
+        // load images
+        game.load.image('button_choice_empty', 'ressources/assets/images/button_choice_empty.png');
+        game.load.image('button_choice_full', 'ressources/assets/images/button_choice_full.png');
+        game.load.image('button_validate', 'ressources/assets/images/button_validate.png');
     }
 
     // PHASERJS function - to start the gui
     function create() {
+        // title
         textTitle = game.add.bitmapText(0, 0, 'gem', 'OUTCAST', sizeTitle);
-        textTitle.centerX = window.innerWidth / 2;
-        textTitle.centerY =  window.innerHeight / 2 - textTitle.height * 3;
-        // get the token (=start a game server-side)
-        let request = sendHttpRequest("http://localhost:3000/api/v1/start_game", "GET", null);
+        // button validate
+        buttonValidate = game.add.button(0, 0, 'button_validate', postChoice);
+        // get the token (= start a game server-side)
+        const request = sendHttpRequest(endpointStart, "GET", null);
         token = JSON.parse(request.response).token;
     }
 
     // PHASERJS function - update the gui
     function update() {
+        if (window.innerHeight != windowHeight || window.innerWidth != windowWidth)
+            resizeWindow();
         if (waitEvent == true) {
             // need to start game before
-            let request = sendHttpRequest("http://localhost:3000/api/v1/events", "GET", null);
+            const request = sendHttpRequest(endpointEvent, "GET", null);
             console.log(request.response);
+            const response = JSON.parse(request.response);
+            destroyText();
+            idEvent = response.id;
+            textEvent = game.add.bitmapText(0, 0, 'gem', response.text, sizeEvent);
+            for (let i = 0; i < response.choices.length; i++) {
+                let textChoice = game.add.bitmapText(windowWidth * 0.3, 0, 'gem', response.choices[i].text, sizeEvent);
+                textChoices.push(textChoice);
+                let buttonChoice = game.add.button(0, 0, 'button_choice_empty', ()=> {selectChoice(i);});
+                buttonChoices.push(buttonChoice);
+            }
             waitEvent = false;
+            selectedChoice = null;
+
+            // why not ?
+            resizeWindow();
+        }
+    }
+
+    // destroy all text before redisplay them updated
+    function destroyText() {
+        if (textEvent != null)
+            textEvent.destroy();
+        for (let i = 0; i < textChoices.length; i++)
+            textChoices[i].destroy();
+        textChoices = [];
+        for (let i = 0; i < buttonChoices.length; i++)
+            buttonChoices[i].destroy();
+        buttonChoices = [];
+    }
+
+    function resizeWindow() {
+        // rescale
+        windowHeight = window.innerHeight;
+        windowWidth = window.innerWidth;
+        game.scale.setGameSize(windowWidth, windowHeight);
+        // title
+        textTitle.centerX = windowWidth * 0.5;
+        textTitle.centerY =  windowHeight * 0.2;
+        // button validate
+        buttonValidate.centerX = windowWidth * 0.5;
+        buttonValidate.centerY =  windowHeight * 0.8;
+        // event
+        textEvent.centerX = windowWidth * 0.5;
+        textEvent.centerY =  windowHeight * 0.4;
+        // choices
+        for (let i = 0; i < textChoices.length; i++) {
+            textChoices[i].x = windowWidth * 0.3;
+            textChoices[i].centerY = windowHeight * 0.5 + i * 40;
+        }
+        // button choices
+        for (let i = 0; i < buttonChoices.length; i++) {
+            buttonChoices[i].x = windowWidth * 0.3 - buttonChoices[i].width * 2;
+            buttonChoices[i].centerY = windowHeight * 0.5 + i * 40;
+        }
+    }
+
+    function selectChoice(idx) {
+        console.log("Click on button " + idx);
+        if (selectedChoice != null)
+            buttonChoices[selectedChoice].loadTexture('button_choice_empty');
+        buttonChoices[idx].loadTexture('button_choice_full');
+        selectedChoice = idx;
+    }
+
+    function postChoice() {
+        if (selectedChoice != null) {
+            let body = {
+                'id_event': idEvent,
+                'id_choice': selectedChoice + 1
+            };
+            sendHttpRequest(endpointEvent, "POST", JSON.stringify(body));
+            selectedChoice = null;
+            waitEvent = true;
         }
     }
 
@@ -58,8 +156,10 @@
     function sendHttpRequest(url, method, body) {
         const req = new XMLHttpRequest();
         req.open(method, url, false);
-        if (token != null)
+        if (token != null) {
             req.setRequestHeader('Authorization', token);
+            req.setRequestHeader('Content-Type', 'application/json');
+        }
         req.send(body);
         return req;
     }

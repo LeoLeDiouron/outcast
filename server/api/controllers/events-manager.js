@@ -48,7 +48,8 @@ function modifyContextOther(game, category, results) {
 }
 
 function modifyContext(game, idEvent, idChoice) {
-    const results = game.events[idEvent-1].choices[idChoice-1].results;
+    console.log(idChoice);
+    const results = game.events[idEvent-1].choices[idChoice].results;
     game.events[idEvent-1].is_done = true;
     for (let category in results) {
         if (category == 1)
