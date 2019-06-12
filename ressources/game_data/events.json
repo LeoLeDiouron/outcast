@@ -1,33 +1,140 @@
 [
     {
-        "id": 1,
-        "text": "Hello my lord !",
-        "author": 1,
+        "id": 0,
+        "text": "[ENNAR]: \"Alors nous y voila. Au fond d'une grotte, perdus dans le desert du vautour.\nAu moins je nous ai sorti de ce petrin n'est-ce pas ?\"",
         "priority": true,
         "is_done": false,
+        "next": [1,1],
+        "initial_event": true,
         "conditions": {},
         "choices": [
             {
-                "id": 1,
-                "text": "Hello.",
+                "id": 0,
+                "text": "C'est vrai. Sans toi, je serai mort depuis longtemps.",
                 "results": {
-                    "1": {
-                        "reputation": 1
+                    "player": {
+                        "honnor": 1
                     },
-                    "2": {
-                        "1": {
-                            "level_relation": 100
+                    "characters": {
+                        "0": {
+                            "level_relation": 4
                         }
                     }
                 },
                 "conditions": {}
             },
             {
-                "id": 2,
-                "text": "Holà.",
+                "id": 1,
+                "text": "A vrai dire, j'aurai preferé crever dans mon chateau que d'etre ici.",
                 "results": {
-                    "1": {
-                        "reputation": 2
+                    "player": {
+                        "fear": 1
+                    },
+                    "characters": {
+                        "0": {
+                            "level_relation": -4
+                        }
+                    }
+                },
+                "conditions": {}
+            }
+        ]
+    },
+    {
+        "id": 1,
+        "text": "[ENNAR]: \"Enfin ce n'est pas parce qu'on s'est retrouvé ici que c'est la fin.\nSur la route j'ai entendu des voyageurs qui allaient vers le nord.\nIls parlaient de Chtulm, un petit village dont le seigneur vient de mourrir.\"",
+        "priority": true,
+        "is_done": false,
+        "next": [2,3],
+        "initial_event": true,
+        "conditions": {},
+        "choices": [
+            {
+                "id": 0,
+                "text": "Essayons de se renseigner sur la situation, on en tirera surement profit.",
+                "results": {
+                    "player": {
+                        "honnor": 1
+                    }
+                },
+                "conditions": {}
+            },
+            {
+                "id": 1,
+                "text": "Profitons de la stupidité de ces bouseux pour les exploiter au mieux.\nJe tuerai le premier qui ose s'opposer à moi.",
+                "results": {
+                    "player": {
+                        "fear": 1
+                    }
+                },
+                "conditions": {}
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "text": "[ENNAR]: \"Sage decision sire ! Nous sommes à une demie-journée à pied du village,\nnous pourrions tenter de nous faire passer pour des marchands.\"",
+        "priority": true,
+        "is_done": false,
+        "next": [0],
+        "initial_event": false,
+        "conditions": {},
+        "choices": [
+            {
+                "id": 0,
+                "text": "Allons-y.",
+                "results": {
+                    "characters": {
+                        "0": {
+                            "level_relation": 5
+                        }
+                    }
+                },
+                "conditions": {}
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "text": "[ENNAR]: \"Hum. Si vous y tenez. Essayons quand même de ne pas trop attirer l'attention sur nous...\"",
+        "priority": true,
+        "is_done": false,
+        "next": [0,0],
+        "initial_event": false,
+        "conditions": {},
+        "choices": [
+            {
+                "id": 0,
+                "text": "Je fais ce que je veux ! Depuis quand me donnez-vous des ordres Ennar ?\nAllons-y, et surveillez vos propos.",
+                "results": {
+                    "player": {
+                        "fear": 2
+                    },
+                    "characters": {
+                        "0": {
+                            "level_relation": -15
+                        }
+                    }
+                },
+                "conditions": {}
+            },
+            {
+                "id": 1,
+                "text": "Bien sur, je ne suis pas stupide.",
+                "results": {},
+                "conditions": {}
+            },
+            {
+                "id": 2,
+                "text": "Mais je plaisantais voyons ! Personne ne mourra aujourd'hui.\nEnfin j'espère !",
+                "results": {
+                    "player": {
+                        "honnor": 1
+                    },
+                    "characters": {
+                        "0": {
+                            "level_relation": 5
+                        }
                     }
                 },
                 "conditions": {}

@@ -1,24 +1,24 @@
 {
-    "1": {
+    "player": {
         "name": "",
         "house": "",
         "status": 0,
         "reputation": 0,
-        "honnor": 0,
-        "fear": 0,
+        "honnor": 50,
+        "fear": 50,
         "money": 100,
         "military_force": 0.1
     },
-    "2": [
+    "characters": [
         {
-            "id": 1,
-            "name": "John",
+            "id": 0,
+            "name": "ENNAR",
             "level_relation": 50
         }
     ],
-    "3": [
+    "places": [
         {
-            "id": 1,
+            "id": 0,
             "name": "The cavern",
             "status": 1,
             "defense": 0,

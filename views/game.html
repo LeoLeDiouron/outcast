@@ -24,6 +24,7 @@
     // text
     let textTitle = null;
     let textEvent = null;
+    let textContext = null;
     let textChoices = [];
 
     // buttons
@@ -46,6 +47,7 @@
     const api = "/api/v1";
     const endpointStart = baseUrlLocalhost + api + "/start_game";
     const endpointEvent = baseUrlLocalhost + api + "/events";
+    const endpointContext = baseUrlLocalhost + api + "/context"
 
     // PHASERJS function - to preload assets
     function preload() {
@@ -74,22 +76,26 @@
             resizeWindow();
         if (waitEvent == true) {
             // need to start game before
-            const request = sendHttpRequest(endpointEvent, "GET", null);
-            console.log(request.response);
-            const response = JSON.parse(request.response);
+            const requestEvent = sendHttpRequest(endpointEvent, "GET", null);
+            console.log(requestEvent.response);
+            const responseEvent = JSON.parse(requestEvent.response);
             destroyText();
-            idEvent = response.id;
-            textEvent = game.add.bitmapText(0, 0, 'gem', response.text, sizeEvent);
-            for (let i = 0; i < response.choices.length; i++) {
-                let textChoice = game.add.bitmapText(windowWidth * 0.3, 0, 'gem', response.choices[i].text, sizeEvent);
+            idEvent = responseEvent.id;
+            textEvent = game.add.bitmapText(0, 0, 'gem', responseEvent.text, sizeEvent);
+            for (let i = 0; i < responseEvent.choices.length; i++) {
+                let textChoice = game.add.bitmapText(windowWidth * 0.3, 0, 'gem', responseEvent.choices[i].text, sizeEvent);
                 textChoices.push(textChoice);
                 let buttonChoice = game.add.button(0, 0, 'button_choice_empty', ()=> {selectChoice(i);});
                 buttonChoices.push(buttonChoice);
             }
+            const requestContext = sendHttpRequest(endpointContext, "GET", null);
+            console.log(requestContext.response)
+            const playerContext = JSON.parse(requestContext.response).player;
+            const context = `Status:${playerContext.status} | Reputation:${playerContext.reputation} | Honnor:${playerContext.honnor}% | Fear:${playerContext.fear}% | Money:${playerContext.money} | MilitaryForce:${playerContext.military_force}`;
+            textContext = game.add.bitmapText(0, 0, 'gem', context, sizeEvent);
             waitEvent = false;
             selectedChoice = null;
 
-            // why not ?
             resizeWindow();
         }
     }
@@ -98,6 +104,8 @@
     function destroyText() {
         if (textEvent != null)
             textEvent.destroy();
+        if (textContext != null)
+            textContext.destroy();
         for (let i = 0; i < textChoices.length; i++)
             textChoices[i].destroy();
         textChoices = [];
@@ -114,21 +122,24 @@
         // title
         textTitle.centerX = windowWidth * 0.5;
         textTitle.centerY =  windowHeight * 0.2;
+        // context
+        textContext.centerX = windowWidth * 0.5;
+        textContext.centerY =  windowHeight * 0.95;
         // button validate
         buttonValidate.centerX = windowWidth * 0.5;
-        buttonValidate.centerY =  windowHeight * 0.8;
+        buttonValidate.centerY =  windowHeight * 0.85;
         // event
         textEvent.centerX = windowWidth * 0.5;
         textEvent.centerY =  windowHeight * 0.4;
         // choices
         for (let i = 0; i < textChoices.length; i++) {
             textChoices[i].x = windowWidth * 0.3;
-            textChoices[i].centerY = windowHeight * 0.5 + i * 40;
+            textChoices[i].centerY = windowHeight * 0.5 + i * 60;
         }
         // button choices
         for (let i = 0; i < buttonChoices.length; i++) {
             buttonChoices[i].x = windowWidth * 0.3 - buttonChoices[i].width * 2;
-            buttonChoices[i].centerY = windowHeight * 0.5 + i * 40;
+            buttonChoices[i].centerY = windowHeight * 0.5 + i * 60;
         }
     }
 
@@ -144,7 +155,7 @@
         if (selectedChoice != null) {
             let body = {
                 'id_event': idEvent,
-                'id_choice': selectedChoice + 1
+                'id_choice': selectedChoice
             };
             sendHttpRequest(endpointEvent, "POST", JSON.stringify(body));
             selectedChoice = null;

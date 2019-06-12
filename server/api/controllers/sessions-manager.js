@@ -33,7 +33,7 @@ function getDataJsonFile(file) {
     return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 
-function createGame() {
+async function createGame() {
     let game = {
         events: {},
         context: {},
@@ -42,7 +42,7 @@ function createGame() {
 
     game.events = getDataJsonFile(pathEventsFile);
     game.context = getDataJsonFile(pathContextFile);
-    game.available_events.push(1);
+    game.available_events.push(0);
     return game;
 }
 

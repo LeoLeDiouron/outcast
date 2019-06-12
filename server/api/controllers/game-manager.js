@@ -3,9 +3,9 @@ const eventsManager = require('./events-manager');
 
 let games = {};
 
-function startGame(req, res) {
+async function startGame(req, res) {
     const token = sessionsManager.createSession(req, res);
-    games[token] = sessionsManager.createGame();
+    games[token] = await sessionsManager.createGame();
     console.log(JSON.stringify(games));
 }
 
@@ -20,7 +20,6 @@ function getEvent(req, res) {
 function postChoice(req, res) {
     console.log("____________POST EVENT____________")
     const token = req.headers.authorization;
-    console.log(JSON.stringify(req.body))
     const idEvent = req.body.id_event;
     const idChoice = req.body.id_choice;
     games[token] = eventsManager.modifyContext(games[token], idEvent, idChoice);
